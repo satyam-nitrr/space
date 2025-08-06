@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Mission Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+
+        .star:nth-child(odd) {
+            animation-delay: 1s;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00d4ff, #0099cc, #7b68ee);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+        }
+
+        .form-subtitle {
+            text-align: center;
+            color: #b0c4de;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #e0e6ed;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="date"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.02);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem 1rem;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #00d4ff;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 0.5rem;
+            width: auto;
+            accent-color: #00d4ff;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .radio-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #00d4ff;
+        }
+
+        .radio-item input[type="radio"] {
+            margin-right: 0.5rem;
+            width: auto;
+            accent-color: #00d4ff;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.4);
+        }
+
+        .section-title {
+            color: #00d4ff;
+            font-size: 1.3rem;
+            margin: 2rem 0 1rem 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(45deg, #00d4ff, #7b68ee);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-planet {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .planet1 {
+            width: 60px;
+            height: 60px;
+            background: #ff6b6b;
+            top: 20%;
+            right: 10%;
+            animation-delay: 0s;
+        }
+
+        .planet2 {
+            width: 40px;
+            height: 40px;
+            background: #4ecdc4;
+            top: 60%;
+            left: 5%;
+            animation-delay: 2s;
+        }
+
+        .planet3 {
+            width: 80px;
+            height: 80px;
+            background: #ffe66d;
+            top: 80%;
+            right: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .radio-group,
+            .checkbox-group {
+                flex-direction: column;
+            }
+            
+            .form-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="floating-elements">
+        <div class="floating-planet planet1"></div>
+        <div class="floating-planet planet2"></div>
+        <div class="floating-planet planet3"></div>
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <h1 class="form-title">🚀 SPACE MISSION</h1>
+            <p class="form-subtitle">APPLICATION FOR INTERSTELLAR EXPLORATION</p>
+            
+            <form id="spaceForm">
+                <div class="section-title">👨‍🚀 PERSONAL INFORMATION</div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="astronaut@space.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="birthDate">Birth Date</label>
+                        <input type="date" id="birthDate" name="birthDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nationality">Nationality</label>
+                        <select id="nationality" name="nationality" required>
+                            <option value="">Select your nationality</option>
+                            <option value="us">United States</option>
+                            <option value="ca">Canada</option>
+                            <option value="uk">United Kingdom</option>
+                            <option value="de">Germany</option>
+                            <option value="fr">France</option>
+                            <option value="jp">Japan</option>
+                            <option value="au">Australia</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="section-title">🛸 MISSION PREFERENCES</div>
+
+                <div class="form-group">
+                    <label>Preferred Mission Type</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="lunar" name="missionType" value="lunar">
+                            <label for="lunar">🌙 Lunar</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="mars" name="missionType" value="mars">
+                            <label for="mars">🔴 Mars</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="deepSpace" name="missionType" value="deepSpace">
+                            <label for="deepSpace">🌌 Deep Space</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">Mission Duration (months)</label>
+                    <input type="number" id="duration" name="duration" min="1" max="60" placeholder="6">
+                </div>
+
+                <div class="form-group">
+                    <label>Special Skills & Qualifications</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pilot" name="skills" value="pilot">
+                            <label for="pilot">✈️ Pilot License</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="medical" name="skills" value="medical">
+                            <label for="medical">⚕️ Medical Training</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="engineering" name="skills" value="engineering">
+                            <label for="engineering">🔧 Engineering</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="research" name="skills" value="research">
+                            <label for="research">🔬 Research</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="linguistics" name="skills" value="linguistics">
+                            <label for="linguistics">🗣️ Linguistics</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">📝 ADDITIONAL INFORMATION</div>
+
+                <div class="form-group">
+                    <label for="experience">Previous Space/Aviation Experience</label>
+                    <textarea id="experience" name="experience" placeholder="Describe your relevant experience, training, or qualifications..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="motivation">Why do you want to join this mission?</label>
+                    <textarea id="motivation" name="motivation" placeholder="Tell us about your motivation and what drives your passion for space exploration..."></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    LAUNCH APPLICATION 🚀
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Create animated stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const numStars = 100;
+
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDuration = (Math.random() * 3 + 1) + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('spaceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Create a success message
+            const formContainer = document.querySelector('.form-container');
+            formContainer.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+                    <h2 style="color: #00d4ff; margin-bottom: 1rem;">Application Submitted Successfully!</h2>
+                    <p style="color: #b0c4de; margin-bottom: 2rem;">Your space mission application has been received. Our mission control team will review your application and contact you within 48 hours.</p>
+                    <div style="font-size: 2rem;">🚀✨🌟</div>
+                    <p style="color: #e0e6ed; margin-top: 1rem; font-style: italic;">Ready for liftoff!</p>
+                </div>
+            `;
+            
+            // Add some celebration effects
+            setTimeout(() => {
+                createFireworks();
+            }, 500);
+        });
+
+        // Simple fireworks effect
+        function createFireworks() {
+            const colors = ['#00d4ff', '#ff6b6b', '#4ecdc4', '#ffe66d', '#7b68ee'];
+            
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.style.position = 'fixed';
+                    firework.style.left = Math.random() * window.innerWidth + 'px';
+                    firework.style.top = Math.random() * window.innerHeight + 'px';
+                    firework.style.width = '4px';
+                    firework.style.height = '4px';
+                    firework.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    firework.style.borderRadius = '50%';
+                    firework.style.pointerEvents = 'none';
+                    firework.style.zIndex = '1000';
+                    firework.style.boxShadow = `0 0 10px ${firework.style.backgroundColor}`;
+                    
+                    document.body.appendChild(firework);
+                    
+                    // Animate the firework
+                    firework.animate([
+                        { transform: 'scale(1) translateY(0px)', opacity: 1 },
+                        { transform: 'scale(3) translateY(-100px)', opacity: 0 }
+                    ], {
+                        duration: 1000,
+                        easing: 'ease-out'
+                    });
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        document.body.removeChild(firework);
+                    }, 1000);
+                }, i * 100);
+            }
+        }
+
+        // Initialize stars when page loads
+        createStars();
+
+        // Add interactive hover effects to form elements
+        const formInputs = document.querySelectorAll('input, select, textarea');
+        formInputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0px)';
+            });
+        });
+    </script>
+</body>
+</html>
